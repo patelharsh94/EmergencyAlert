@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="electroniccupcake.EmergencyAlert.configureScreen"
+    android:id="@+id/configureScreen"
+    android:background="@color/background_material_dark">
+
+<ListView
+    android:layout_width="wrap_content"
+    android:layout_height="180dp"
+    android:id="@+id/contactList"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:choiceMode="multipleChoiceModal"
+    android:clickable="true"
+    android:drawSelectorOnTop="false"
+    android:focusableInTouchMode="false"
+    android:focusable="false"
+    android:scrollingCache="false"
+    android:visibility="visible"
+    android:descendantFocusability="blocksDescendants"
+    android:divider="#ff1edcff"
+    android:touchscreenBlocksFocus="false"
+    android:transitionGroup="false"
+    android:fastScrollAlwaysVisible="false"
+    android:smoothScrollbar="true"
+    android:theme="@style/Base.Theme.AppCompat"
+    android:dividerHeight="1dp"
+    android:layout_above="@+id/AddContact"
+    android:layout_alignParentTop="true" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddContact" android:inputType="number"
+        android:hint="@string/AddNumberHint"
+        android:numeric="integer"
+        android:layout_above="@+id/AddButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textStyle="italic"
+        android:textColorHint="#ff1edcff"
+        android:textColor="#ff1edcff" />
+
+<Button
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:text="@string/addButton"
+    android:id="@+id/AddButton"
+    android:layout_centerVertical="true"
+    android:layout_toLeftOf="@+id/returnButton"
+    android:layout_toStartOf="@+id/returnButton"
+    android:background="#ff1edcff"
+    android:textColor="@color/abc_primary_text_disable_only_material_dark"
+    android:textStyle="bold|italic"
+    android:elevation="10dp" />
+
+<EditText
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/Message"
+    android:hint="@string/MessageHint"
+    android:height="100dp"
+    android:layout_below="@+id/AddButton"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_marginTop="44dp"
+    android:maxLines="10"
+    android:shadowColor="#ff1edcff"
+    android:textStyle="italic"
+    android:textColorHint="#ff1edcff"
+    android:textColor="#ff1edcff"
+    android:selectAllOnFocus="true" />
+
+    <Button
+    style="?android:attr/buttonStyleSmall"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:text="@string/DeleteText"
+    android:id="@+id/DeleteButton"
+    android:layout_above="@+id/Message"
+    android:layout_toRightOf="@+id/AddButton"
+    android:layout_toEndOf="@+id/AddButton"
+        android:background="#ff1edcff"
+        android:textColor="@color/abc_primary_text_disable_only_material_dark"
+        android:textStyle="bold|italic"
+        android:elevation="10dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Return"
+        android:id="@+id/returnButton"
+        android:onClick="ReturnClicked"
+        android:layout_below="@+id/Message"
+        android:layout_centerHorizontal="true"
+        android:background="#ff1edcff"
+        android:textColor="@color/abc_primary_text_disable_only_material_dark"
+        android:textStyle="bold|italic" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/BrowseButton"
+        android:id="@+id/browseButton"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/DeleteButton"
+        android:layout_toEndOf="@+id/DeleteButton"
+        android:background="#ff1edcff"
+        android:textColor="@color/abc_primary_text_disable_only_material_dark"
+        android:textStyle="bold|italic"
+        android:elevation="10dp" />
+
+</RelativeLayout>

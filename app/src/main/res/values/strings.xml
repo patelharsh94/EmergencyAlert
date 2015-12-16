@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ProjectAlert</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_emergency_fragment">EmergencyFragment</string>
+    <string name="title_activity_configure_fragment">configureFragment</string>
+    <string name="AddNumberHint">Add Mobile Number</string>
+    <string name="addButton">Add</string>
+    <string name="MessageHint">Enter a Message</string>
+    <string name="SaveButton">Save</string>
+    <string name="DeleteText">Delete</string>
+    <string name="title_activity_configure_screen">configureScreen</string>
+    <string name="AlertButton">ALERT</string>
+    <string name="ConfigureButton"><![CDATA[Configure >>]]></string>
+    <string name="returnButton"><![CDATA[<<Return]]></string>
+    <string name="BrowseButton">Browse</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="configure">Configure</string>
+    <string name="alert">Alert</string>
+
+</resources>
