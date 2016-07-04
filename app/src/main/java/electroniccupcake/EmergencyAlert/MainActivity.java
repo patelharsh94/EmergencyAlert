@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,12 +17,23 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.ActionProvider;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -41,8 +54,15 @@ import java.util.Locale;
 
 import electroniccupcake.projectalert.R;
 
+/*
+        Help for creating this file was taken from:
+        URL:https://github.com/codepath/android_guides/wiki/Fragment-Navigation-Drawer
+        by: Harsh Patel, 6/19/2016
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        Author: Harsh Patel
+*/
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // private static TextView Alert;
     private static String TAG;                          // For log messages
@@ -53,13 +73,15 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private static Button AlertButton;                  // The alert button.
     private static boolean LOCATION_FOUND = false;      // If the location was found, then true.
     private static GoogleApiClient mGoogleApiClient;    // Handel to the googleApi
-    private static int arrSize = 0;                    // The size of the array.
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    private static int arrSize = 0;                     // The size of the array.
+    private DrawerLayout drawer_layout;                 // To setup the drawer
+    private Toolbar toolbar;                            // toolbar
+    private NavigationView nav_view;                    // Drawer navigation
+    private ActionBarDrawerToggle drawerToggler;        // to toggle the drawer
     private GoogleApiClient client;
-
+    private Fragment fragment = null;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+    private int currentMenuItem;
     /*
      * This method basically Initializes everything.
      * */
@@ -67,10 +89,83 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         MsgInfo = new StringBuffer();
         PhoneInfo = new StringBuffer();
         finalAddress = new StringBuffer();
-        AlertButton = (Button) findViewById(R.id.AlertButton);
-    }
-    // Starting the geo location service and getting the final address..
+   //     AlertButton = (Button) findViewById(R.id.AlertButton);
 
+        toolbar = (Toolbar) findViewById(R.id.navigation_toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        nav_view = (NavigationView) findViewById(R.id.navigation_drawer_main);
+        setUpDrawer(nav_view);
+    // Setting up the toggler and adding it to the layout.
+        drawerToggler = new ActionBarDrawerToggle(this,drawer_layout,toolbar,R.string.app_name,R.string.app_name);
+        drawer_layout.addDrawerListener(drawerToggler);
+    }
+
+
+    // This method will work towards setting up the drawer and the client that
+    // will switch out the drawer views.
+    private void setUpDrawer(NavigationView view)
+    {
+        view.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener()
+                {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem item)
+                    {
+                        switchViewsWithSelectedItem(item);
+                        return true;
+                    }
+                }
+        );
+    }
+
+    // This method will switch the fragments based on the fragments selected.
+    public void switchViewsWithSelectedItem(MenuItem item)
+    {
+        Class frag_class;
+        int id = item.getItemId();
+        currentMenuItem = id;
+        switch (id)
+        {
+            // switching based on the id's selected.
+            case R.id.home:
+                frag_class = main_content.class;
+                break;
+            case R.id.settings:
+                frag_class = settings_fragment.class;
+                break;
+
+            case R.id.vital_info:
+                frag_class = vital_info_fragment.class;
+                break;
+
+            case R.id.emergency_contacts:
+                frag_class = emergency_contacts_fragment.class;
+                break;
+
+            default:
+                frag_class = main_content.class;
+        }
+
+        try
+        {
+            fragment = (Fragment) frag_class.newInstance();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        // replacing the fragments
+        fragmentManager.beginTransaction().replace(R.id.main_content_fl,fragment).commit();
+
+        item.setChecked(true);
+
+        // close the drawer.
+        drawer_layout.closeDrawers();
+    }
+    // Starting the geo location service and getting the final address.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.setTitle("Emergency Alert");
@@ -79,6 +174,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         buildGoogleApiClient();
         LocationCheck();
         FindAddress();
+        Class main_class = main_content.class;
         // Start the setup activity as soon as the app start, but only when the app is first start.
         // This part was inspired from: http://stackoverflow.com/questions/7238532/how-to-launch-activity-only-once-when-app-is-opened-for-first-time
         // Date: 06/11/2015
@@ -86,6 +182,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         // setting shared preferences for the main activity
         SharedPreferences MainPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean ConfigIsStarted = MainPref.getBoolean("ConfigIsStarted", false);
+
 
         // if the configure was not previously started save it in the system preferences.
         if (!ConfigIsStarted) {
@@ -96,6 +193,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             edit.commit();
         }
         Initialize();                                       // Initialize everything.
+
+        switchViewsWithSelectedItem(nav_view.getMenu().getItem(0));     // Initially set to home.
+
         try {
             readFile();                                     // Get all the data.
         } catch (IOException e) {
@@ -107,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         /*
         * This is the browse button, all it does is call the pick contact method
-        * */
+        *
         AlertButton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
@@ -120,7 +220,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                         }
                     }
                 }
-        );
+        );*/
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -134,6 +234,28 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API)
                 .build();
     }
+
+    @Override
+    // on back pressed, go back to home.
+    public void onBackPressed()
+    {
+        // if on alert screen and drawer is closed, open the drawer.
+        if(currentMenuItem == R.id.home && !drawer_layout.isDrawerOpen(nav_view))
+        {
+            drawer_layout.openDrawer(nav_view);
+        }
+        // if the drawer is open, close the drawer
+        else if (drawer_layout.isDrawerOpen(nav_view))
+        {
+            drawer_layout.closeDrawer(nav_view);
+        }
+        // if pressed back and not one alert screen go to the alert screen.
+        else
+        {
+            switchViewsWithSelectedItem(nav_view.getMenu().getItem(0));
+        }
+    }
+
     /*
     * Name: LocationCheck
     * Objective: This method basically sends a dialogue to the user asking if all the location/wifi permissions were met.
@@ -503,21 +625,10 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if(drawerToggler.onOptionsItemSelected(item))
+        {
             return true;
         }
 
@@ -525,7 +636,21 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     @Override
+    public void onPostCreate(Bundle savedInstanceState)
+    {
+        super.onPostCreate(savedInstanceState);
+        drawerToggler.syncState();
+    }
+
+    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config)
+    {
+        super.onConfigurationChanged(config);
+        drawerToggler.onConfigurationChanged(config);
     }
 
     @Override
