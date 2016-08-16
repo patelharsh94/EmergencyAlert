@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:divider="#ffffff"
+    android:dividerPadding="5dp"
+    android:elevation="2dp"
+    android:focusable="true"
+    android:longClickable="true"
+    android:showDividers="end"
+    android:textAlignment="center"
+    android:background="#201f1f">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name"
+        android:id="@+id/user_phone_name"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:textStyle="normal"
+        android:textSize="20dp"
+        android:paddingTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/user_photo"
+        android:layout_toEndOf="@+id/user_photo"
+        android:paddingLeft="10dp"
+        android:paddingBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Phone Number"
+        android:id="@+id/user_phone_number"
+        android:phoneNumber="true"
+        android:textStyle="italic"
+        android:textIsSelectable="false"
+        android:textSize="16dp"
+        android:paddingTop="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/user_phone_name"
+        android:layout_alignStart="@+id/user_phone_name"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/user_photo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_face_white_48dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#FFFFFF"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:paddingTop="0dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/move_vert"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="10dp"
+        android:src="@drawable/ic_more_vert_white_24dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Undo"
+        android:visibility="gone"/>
+</RelativeLayout>

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ProjectAlert.iml" filepath="$PROJECT_DIR$/ProjectAlert.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/progressviewslib/progressviewslib.iml" filepath="$PROJECT_DIR$/progressviewslib/progressviewslib.iml" />
     </modules>
   </component>
 </project>

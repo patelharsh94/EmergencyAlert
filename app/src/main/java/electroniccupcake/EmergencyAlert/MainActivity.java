@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         switchViewsWithSelectedItem(nav_view.getMenu().getItem(0));     // Initially set to home.
 
+
         try {
             readFile();                                     // Get all the data.
         } catch (IOException e) {

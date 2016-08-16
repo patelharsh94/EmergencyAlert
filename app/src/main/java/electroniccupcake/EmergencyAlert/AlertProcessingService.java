@@ -20,6 +20,7 @@ public class AlertProcessingService extends IntentService
     private double final_time;
     private double progress;
     private Intent progressUpdateIntent;
+
     public AlertProcessingService()
     {
         super("com.electroniccupcake.EmergencyAlert.AlertProcessingService");

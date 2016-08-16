@@ -91,7 +91,7 @@ public class configureScreen extends ActionBarActivity
         contactList = (ListView)findViewById(R.id.contactList);
 
         phoneNumberArr = new Node[1];
-        phoneNumberArr[0] = new Node("",0);
+       // phoneNumberArr[0] = new Node("",0);
 
 
         /*
@@ -113,7 +113,7 @@ public class configureScreen extends ActionBarActivity
         DeleteButton.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View v){
-                        deleteClicked(DeleteButton);
+      //                  deleteClicked(DeleteButton);
                     }
                 }
 
@@ -175,7 +175,7 @@ public class configureScreen extends ActionBarActivity
             AddContact.setText("");
             Log.d(TAG,"Note: i = " +i );
             Log.d(TAG,"Note: val = "+ val);
-            phoneNumberArr[i-1] = new Node(val, 0);                // Allocating the new node.
+        //    phoneNumberArr[i-1] = new Node(val, 0);                // Allocating the new node.
             Log.d(TAG,"Note: phoneNumberArr has been created.");
             //i++;
             k++;
@@ -206,7 +206,7 @@ public class configureScreen extends ActionBarActivity
     * Objective: This method runs when the delete button is clicked.  It delete the selected information, de-allocates
     * and re-allocates the array, and re-programs the list.
     * */
-    public void deleteClicked(View view)
+   /* public void deleteClicked(View view)
     {
         int j;
         int k = 0;
@@ -248,6 +248,7 @@ public class configureScreen extends ActionBarActivity
             Log.d("TAG","Note: in the third loop j = "+j);
             phoneNumberArr[j] = newArr[j];
         }
+
         // resetting the array size
         i = newArrSize+1;
         phoneNumberArr[newArrSize] = new Node("",0);
@@ -261,6 +262,7 @@ public class configureScreen extends ActionBarActivity
         final AlertAdapter newAdapter = new AlertAdapter(configureScreen.this, phoneNumberArr);
         contactList.setAdapter(newAdapter);
     }
+    */
     /*
     * Name: savingInfo()
     * Objective: It saves all the phone numbers in the list view,
@@ -346,7 +348,7 @@ public class configureScreen extends ActionBarActivity
         int currIndex = 0;                                          // Current index of the array.
                                                                     // resetting the array.
         phoneNumberArr = new Node[i+1];
-        phoneNumberArr[i] = new Node("",0);
+        //phoneNumberArr[i] = new Node("",0);
 
         // Go until there is stuff avaliable in the input and add it to the string..
         while (bis.available() != 0)
@@ -374,7 +376,7 @@ public class configureScreen extends ActionBarActivity
             currNumber = currNumber + ch;
             if(ch == '\n')                  // If you see a \n, then we have a new phone number.
             {
-                phoneNumberArr[currIndex] = new Node("",0);
+               // phoneNumberArr[currIndex] = new Node("",0);
                 Log.d(TAG,"Note: Current number = " + currNumber);
                 AddContact.setText(currNumber);
                 currIndex++;

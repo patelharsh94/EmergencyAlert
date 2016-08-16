@@ -16,10 +16,12 @@
     <string name="ConfigureButton"><![CDATA[Configure >>]]></string>
     <string name="returnButton"><![CDATA[<<Return]]></string>
     <string name="BrowseButton">Browse</string>
-
-<!-- TODO: Remove or change this placeholder text -->
+    <string name="AlertProcessingServiceAddress">com.electroniccupcake.EmergencyAlert.AlertProcessingService</string>
+    <string name="Final_Time">Alert_Touch_Time</string>
+    <string name="Progress_Val">Updated_Progress_Value</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="configure">Configure</string>
     <string name="alert">Alert</string>
-
+    <string name="DBHelperServiceName">electroniccupcake.EmergencyAlert.DBHelperService</string>
+    <string name="MessageSenderIntentName">electroniccupcake.EmergencyAlert.SendMessage</string>
 </resources>

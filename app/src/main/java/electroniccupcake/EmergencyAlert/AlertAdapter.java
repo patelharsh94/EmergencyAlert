@@ -51,10 +51,10 @@ public class AlertAdapter extends ArrayAdapter
         Log.d("TAG", "Position: " + position);
 
         // If the current item has a value of 0, they are not set to checked else checked.
-        if(items[position].getVal() == 0)
-            checker.setChecked(false);
-        else
-            checker.setChecked(true);
+        //if(items[position].getVal() == 0)
+        //    checker.setChecked(false);
+        //else
+        //    checker.setChecked(true);
 
         number.setText(items[position].getPhoneNumber());       // set the field number to be the
         // Setting the check box..                              // phone number of the current item.
@@ -62,10 +62,10 @@ public class AlertAdapter extends ArrayAdapter
                new CompoundButton.OnCheckedChangeListener() {
                    @Override
                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                       if(isChecked == true)
+                      /* if(isChecked == true)
                            items[position].setVal(1);
                        else
-                           items[position].setVal(0);
+                           items[position].setVal(0);*/
                    }
                }
         );

@@ -1,6 +1,8 @@
 package electroniccupcake.EmergencyAlert;
 
-import android.util.Log;
+import android.net.Uri;
+
+import electroniccupcake.projectalert.R;
 
 /*
 * Created by harsh on 5/31/15.
@@ -8,36 +10,38 @@ import android.util.Log;
 * */
 public class Node
 {
-    String phoneNumber = "";                // The phone number
-    String TAG;                             // The TAG for log messages.
-    int val = 0;                            // if val = 0, non-checked, else checked..
+    String phoneNumber;                 // The phone number
+    String contactName;                 // The contact name.
+    Uri contactPhoto;                   // The contact photo.
 
-    Node(String phoneNumber, int val)
+    Node()
+    {
+
+    }
+
+    Node(String phoneNumber, String contactName, Uri contactPhoto)
     // PRE: phoneNumber and val must be initialized.
     // POST: Initialized a node object with the class member phoneNumber set to phoneNumber and
     //       class member val set to val.
     {
         this.phoneNumber = phoneNumber;
-        this.val = val;
-        Log.d(TAG,"Note: the node was created!!!");
+        this.contactName = contactName;
+        this.contactPhoto = contactPhoto;
     }
 
     public String getPhoneNumber()
-    // POST: FCTVAL == phoneNumber.
     {
         return phoneNumber;
     }
 
-    public int getVal()
-    // POST: FCTVAL == val.
+    public String getContactName()
     {
-        return val;
+        return contactName;
     }
 
-    public void setVal(int value)
-    // PRE: value must be initialized.
-    // POST: sets the class member val to be value.
+    public Uri getContactPhoto()
     {
-        val = value;
+        return contactPhoto;
     }
+
 }
