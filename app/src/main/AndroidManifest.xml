@@ -27,17 +27,36 @@
             </intent-filter>
         </service>
 
-        <service android:name="electroniccupcake.EmergencyAlert.DBDataGetter"
-                 android:exported="true"
+     <!--   <service
+                android:name="electroniccupcake.EmergencyAlert.MessageSenderService"
                  android:enabled="true"
-                 />
-
+                 android:exported="true"
+                 android:icon="@drawable/ic_launcher"
+                 android:label="Send Alert"
+                 android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+                >
+                <intent-filter>
+                    <action
+                        android:name="android.service.quicksettings.action.QS_TILE"/>
+                </intent-filter>
+                <meta-data
+                    android:name="android.service.quicksettings.ACTIVE_TILE"
+                    android:value="true" />
+        </service> -->
+        <service
+            android:name="electroniccupcake.EmergencyAlert.DBDataGetter"
+            android:enabled="true"
+            android:exported="true"/>
+  <!--
         <receiver android:name="electroniccupcake.EmergencyAlert.MessageSender">
             <intent-filter>
                 <action android:name="electroniccupcake.EmergencyAlert.SendMessage"/>
-                <action android:name="android.media.VOLUME_CHANGED_ACTION" />
+                <action android:name="android.media.VOLUME_CHANGED_ACTION"/>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.SCREEN_ON"/>
             </intent-filter>
         </receiver>
+   -->
 
         <activity
             android:name="electroniccupcake.EmergencyAlert.MainActivity"

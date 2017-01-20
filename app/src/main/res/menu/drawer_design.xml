@@ -13,16 +13,16 @@ Author: Harsh Patel
         <item android:id="@+id/home"
             android:icon="@drawable/ic_home_white_24dp"
             android:title="Home"/>
-        <item  android:id="@+id/settings"
-            android:icon="@drawable/ic_setting_dark"
-            android:title="Settings"/>
+        <item  android:id="@+id/emergencyMessageFragment"
+            android:icon="@drawable/ic_description_white_24dp"
+            android:title="Emergency Message"/>
         <item
             android:id="@+id/emergency_contacts"
             android:icon="@drawable/ic_assignment_white_24dp"
             android:title="Emergency Contacts"/>
-        <item
+       <!-- <item
             android:id="@+id/vital_info"
             android:icon="@drawable/ic_verified_user_white_24dp"
-            android:title="Vital Info"/>
+            android:title="Vital Info"/> -->
     </group>
 </menu>

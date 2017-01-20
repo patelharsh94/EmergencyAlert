@@ -36,12 +36,8 @@ public class DBDataGetter extends IntentService
                 Log.i("TAG","Exception while waiting for a thread to run..: " + e);
             }
 
-            // sending the data to the reciever..
-            Intent message = new Intent();
-            message.setAction(getString(R.string.MessageSenderIntentName));
-            message.putExtra(MessageSender.PHONE_DATA_STR,runner.getData());
-            Log.i("TAG","Sending broadcast: " + runner.getData().toString());
-            this.sendBroadcast(message);
+            main_content.phoneNumbers = runner.getData();
+
         }
 
 

@@ -45,6 +45,7 @@ public class contacts_list_adapter extends RecyclerView.Adapter<contact_item_vie
     private DBMInterface contacts_server;                       // The server for contact information.
     private boolean isBound;
     private ServiceConnection connection;
+
     public contacts_list_adapter()
     {
 
@@ -118,18 +119,6 @@ public class contacts_list_adapter extends RecyclerView.Adapter<contact_item_vie
         addContactToList(new Node(deletedNumber,deletedName,deletedUri),deletedPos);
 
         notifyItemInserted(deletedPos);
-
-        // updating the server.
-        try
-        {
-            if(isBound)
-                contacts_server.insertIntoDB(deletedName,deletedNumber,String.valueOf(deletedUri),deletedPos);
-            else
-                Log.i("TAG","Service not bounded, cannot insert into db");
-        } catch (RemoteException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     // This method is called when the item is moved.
@@ -208,6 +197,12 @@ public class contacts_list_adapter extends RecyclerView.Adapter<contact_item_vie
             }
         }
     }
+
+    public void unBinService(Context context)
+    {
+        context.unbindService(connection);
+    }
+
     public void setUpConnection()
     {
        connection =  new ServiceConnection()

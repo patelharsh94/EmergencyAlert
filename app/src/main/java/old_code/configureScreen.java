@@ -1,4 +1,4 @@
-package electroniccupcake.EmergencyAlert;
+package old_code;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import electroniccupcake.EmergencyAlert.MainActivity;
+import electroniccupcake.EmergencyAlert.Node;
 import electroniccupcake.projectalert.R;
 
 /*
@@ -41,7 +43,7 @@ public class configureScreen extends ActionBarActivity
     private static EditText Message;                    // The emergency message.
     private static StringBuffer  MsgInfo;               // A string buffer for getting the message.
     private static ListView contactList;                // The list with the phone numbers.
-    private static Node [] phoneNumberArr;              // The array of the phone numbers.
+    private static Node[] phoneNumberArr;              // The array of the phone numbers.
     String TAG;                                         // Just for log messages.
 
     /*

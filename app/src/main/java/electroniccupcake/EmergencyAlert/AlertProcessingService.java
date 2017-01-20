@@ -59,21 +59,6 @@ public class AlertProcessingService extends IntentService
                 LocalBroadcastManager.getInstance(this).sendBroadcast(progressUpdateIntent);
             }
         }
-        /*
-        curr_time = 0.0;
-        start_time = System.currentTimeMillis();
-        // winding down
-        while(curr_time - start_time < final_time)
-        {
-            curr_time =  System.currentTimeMillis();
-            progress = (((start_time - curr_time) / 1000) / final_time) * 100.00;
-            progressUpdateIntent = new Intent();
-            progressUpdateIntent.setAction(main_content.AlertAnimationUpdateReciever.EA_ANIM_REC_ADDR);
-            progressUpdateIntent.addCategory(Intent.CATEGORY_DEFAULT);
-            progressUpdateIntent.putExtra(getApplicationContext().getString(R.string.Progress_Val),(float)progress);
-            LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(progressUpdateIntent);
-        }
-        */
     }
 
     public static void setIsTouching(boolean touching)

@@ -7,10 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,39 +16,20 @@ import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.SmsManager;
 import android.util.Log;
-import android.view.ActionProvider;
-import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import electroniccupcake.projectalert.R;
+import old_code.configureScreen;
 
 /*
         Help for creating this file was taken from:
@@ -68,11 +45,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static String TAG;                          // For log messages
     private static StringBuffer MsgInfo;                // The message
     private static StringBuffer PhoneInfo;              // The list of phone numbers.
-    private static StringBuffer finalAddress;           // The address of the user.
-    private static List<Address> address;               // The list of address given when location found.
-    private static Button AlertButton;                  // The alert button.
-    private static boolean LOCATION_FOUND = false;      // If the location was found, then true.
-    private static GoogleApiClient mGoogleApiClient;    // Handel to the googleApi
+
+    public static GoogleApiClient mGoogleApiClient;    // Handel to the googleApi
     private static int arrSize = 0;                     // The size of the array.
     private DrawerLayout drawer_layout;                 // To setup the drawer
     private Toolbar toolbar;                            // toolbar
@@ -82,13 +56,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Fragment fragment = null;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private int currentMenuItem;
+    public static boolean isConnected = false;
     /*
      * This method basically Initializes everything.
      * */
     public void Initialize() {
         MsgInfo = new StringBuffer();
         PhoneInfo = new StringBuffer();
-        finalAddress = new StringBuffer();
    //     AlertButton = (Button) findViewById(R.id.AlertButton);
 
         toolbar = (Toolbar) findViewById(R.id.navigation_toolbar);
@@ -126,20 +100,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Class frag_class;
         int id = item.getItemId();
         currentMenuItem = id;
+        Log.i("TAG","GOT ID: " + id);
         switch (id)
         {
             // switching based on the id's selected.
             case R.id.home:
                 frag_class = main_content.class;
                 break;
-            case R.id.settings:
-                frag_class = settings_fragment.class;
-                break;
 
-            case R.id.vital_info:
-                frag_class = vital_info_fragment.class;
+            case R.id.emergencyMessageFragment:
+                frag_class = message_fragment.class;
                 break;
-
             case R.id.emergency_contacts:
                 frag_class = emergency_contacts_fragment.class;
                 break;
@@ -173,16 +144,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         buildGoogleApiClient();
         LocationCheck();
-        FindAddress();
+
         Class main_class = main_content.class;
-        // Start the setup activity as soon as the app start, but only when the app is first start.
+        // Start the setup activity as soon as the app start&, but only when the app is first start.
         // This part was inspired from: http://stackoverflow.com/questions/7238532/how-to-launch-activity-only-once-when-app-is-opened-for-first-time
         // Date: 06/11/2015
 
         // setting shared preferences for the main activity
         SharedPreferences MainPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean ConfigIsStarted = MainPref.getBoolean("ConfigIsStarted", false);
-
+        /*Intent messageService = new Intent(this,MessageSenderService.class);
+        startService(messageService);
+        */
 
         // if the configure was not previously started save it in the system preferences.
         if (!ConfigIsStarted) {
@@ -196,39 +169,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         switchViewsWithSelectedItem(nav_view.getMenu().getItem(0));     // Initially set to home.
 
-
-        try {
-            readFile();                                     // Get all the data.
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        // Starting the GeoLocation Service
-
-        /*
-        * This is the browse button, all it does is call the pick contact method
-        *
-        AlertButton.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View v) {
-                        try {
-                            AlertClicked(AlertButton);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        );*/
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     // This method is used to connect to Google's APIs
-    protected synchronized void buildGoogleApiClient() {
+    public synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -349,281 +296,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    /*
-    * Name: FindAddress
-    * Objective: This method finds the current address of the user and saves the address.
-    *
-    * NOTE: A small part of this method was taken from,
-    * URL:http://stackoverflow.com/questions/12102570/how-to-convert-gps-coordinates-to-locality
-    * Date: 07/04/2015
-    * Time: 5:54 PM
-    * */
-    public void FindAddress() {
-        Log.d("TAG", "Note: in FindAddress.");
-        mGoogleApiClient.connect();                         // Connect
-        String AllInfo = "";                                // All the previously stored info.
-        JSONArray data = new JSONArray();                  // The array of all the data.
-        JSONObject LastKnownAddress;                        // The last known address.
-
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        finalAddress = new StringBuffer();
-
-        LastKnownAddress = new JSONObject();
-        try {
-            // saving the message
-            // First reset the info..
-            LastKnownAddress.put("LastKnownAddress", "");
-            data.put(LastKnownAddress);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        // Writing the base address of "" to the file.
-        AllInfo = data.toString();
-        Log.d("TAG", "Note: All Info : " + AllInfo);
-        try {
-            FileOutputStream fos = openFileOutput("LastKnownAddress", MODE_PRIVATE);
-            // rewrite the file..
-            getFilesDir();
-            fos.write(AllInfo.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (mLastLocation != null) {
-            Log.d("TAG", "Note: the Long and Lat is: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
-            Geocoder geo = new Geocoder(this, Locale.getDefault());             // Getting the geo location.
-            try {
-                Log.d("TAG", "Inside the try");
-                address = geo.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-                if (!address.isEmpty()) {
-                    LOCATION_FOUND = true;
-                    Log.d("TAG", "Note: Feature = " + address.get(0).getFeatureName());
-                    Log.d("TAG", "Note: Locality = " + address.get(0).getLocality());
-                    Log.d("TAG", "Note: Admin Area = " + address.get(0).getAdminArea());
-                    Log.d("TAG", "Note: Postal Code = " + address.get(0).getPostalCode());
-                    Log.d("TAG", "Note: Country Name = " + address.get(0).getCountryName());
-
-                    // saving the address of the user.
-                    finalAddress.append(address.get(0).getFeatureName() + " " +   // getting feature name
-                            address.get(0).getLocality() + " " +      // getting locality
-                            address.get(0).getAdminArea() + " " +     // get the area
-                            address.get(0).getPostalCode() + " " +    // get the zip
-                            address.get(0).getCountryName());         // get the country.
-                    Log.d("TAG", "Note: the address is: " + address);
-                    Toast.makeText(this, "Location Found!", Toast.LENGTH_SHORT).show();
-                    // After you find the address, write to file.
-                    LastKnownAddress.put("LastKnownAddress", finalAddress);
-                    data.put(LastKnownAddress);
-                    AllInfo = data.toString();
-                    Log.d("TAG", "Note: All Info : " + AllInfo);
-                    try {
-                        FileOutputStream fos = openFileOutput("LastKnownAddress", MODE_PRIVATE);
-                        // rewrite the file..
-                        getFilesDir();
-                        fos.write(AllInfo.getBytes());
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-
-        }
-
-    }
-
-    /*
-    * Name: readFile.
-    * Objective: This method reads the file that is stored on internal storage and gets the message ready to be sent on the click of a button.
-    *            It is called on create, so the data is gotten and is ready to push.
-    * **Note some of the code for this method was taken from:http://www.lynda.com/Android-tutorials/Creating-reading-JSON-data-files/112584/121170-4.html
-    * Date: 06/10/2015
-    * */
-    public void readFile() throws IOException, JSONException
-    {
-        String LastKnownAddress;                        // The last known address.
-        String phoneNumbers;                            // The saved phone numbers.
-        String Message;                                 // The saved message.
-        FileInputStream fis;                            // For reading in the file.
-        FileInputStream lis;                            // ""
-        BufferedInputStream bis;                        // For reading in the file.
-        BufferedInputStream LastBuffer;                 // ""
-        StringBuffer b;                                 // To save all the stuff written in the file
-        StringBuffer LastAddress;                       // To save the last address
-        JSONArray data;                                 // To save the info stored stored in the file.
-        JSONArray LastAddressData;                      // To save the address info stored in the file.
-
-        LastKnownAddress = "";
-        phoneNumbers = "";
-        Message = "";
-
-        if (!LOCATION_FOUND)                     // If the location was not found, find the address.
-        {
-            FindAddress();
-        }
-        MsgInfo = new StringBuffer();
-        PhoneInfo = new StringBuffer();
-        fis = openFileInput("AppDataAlert");
-        Log.d(TAG, "Note:file is open");
-        bis = new BufferedInputStream(fis);
-        b = new StringBuffer();
-
-        // Go until there is stuff avaliable in the input and add it to the string..
-        while (bis.available() != 0) {
-            char c = (char) bis.read();
-            b.append(c);
-            Log.d(TAG, "Note: B:" + b);
-        }
-
-        bis.close();
-        fis.close();
-        // This file will store the last known address.
-        lis = openFileInput("LastKnownAddress");
-        Log.d(TAG, "Note:file is open");
-        LastBuffer = new BufferedInputStream(lis);
-        LastAddress = new StringBuffer();
-
-        // go until the list has a something, and save the address.
-        while (lis.available() != 0) {
-            char d = (char) lis.read();
-            LastAddress.append(d);
-        }
-
-        LastBuffer.close();
-        lis.close();
-
-        Log.d(TAG, "Note: buffer and file closed");
-        data = new JSONArray(b.toString());
-        LastAddressData = new JSONArray(LastAddress.toString());
-        LastKnownAddress = LastAddressData.getJSONObject(0).getString("LastKnownAddress");
-        Log.d("TAG", "Note: LAST KNOWN ADDRESS: " + LastKnownAddress);
-
-        //Getting the stored message.
-        for (int i = 0; i < data.length(); i++) {
-            Message = data.getJSONObject(i).getString("Message");
-            MsgInfo.append(Message.trim());
-            Log.d(TAG, "Note: MsgInfo: " + MsgInfo);
-        }
-
-        // Add the location to the message if the location was found.
-        MsgInfo.append("\n");
-        // If address cant be found, use the last known address.
-        if (finalAddress.toString().trim().length() > 0)
-        {
-            // Win Win Win.
-            MsgInfo.append("This person was last seen at: \n" + finalAddress.toString());
-        }
-        else if (LastKnownAddress.trim().length() > 0)          // if last known address was found.
-        {
-            // When user never turns on location, but then turns it off.
-            finalAddress.append(LastKnownAddress);
-            MsgInfo.append("Although we are not completely sure of the location of this person,\n" +
-                    "our app last detected him here: " + finalAddress.toString());
-        }
-        else                                                    // if no address was found.
-        {
-            // When user never turns on Location.
-            MsgInfo.setLength(0);
-            MsgInfo.append(Message + "\n");
-            MsgInfo.append("No recent Location of this person was found.");
-        }
-        //Getting the phone numbers.
-        for (int i = 0; i < data.length(); i++) {
-            phoneNumbers = data.getJSONObject(i).getString("PhoneNumbers");
-            PhoneInfo.append(phoneNumbers + "\n");
-            Log.d(TAG, "Note: MsgInfo: " + PhoneInfo);
-        }
-        Log.d("TAG", "Note: phone numbers: " + phoneNumbers);
-        Log.d("TAG", "Note: Message: " + Message);
-        Log.d(TAG, "Note: got arrsize");
-        arrSize = data.getJSONObject(0).getInt("ArraySize");
-
-    }
-
-    /*
-    * Name: sendBulkMessages
-    * Objective: This method sends messages out to your emergency contact/s
-    * */
-    public void SendBulkMessages() throws IOException, JSONException
-    {
-        Log.d("TAG", "Note: in SendinBulkMessages");
-        String currNumber = "";
-        String Message = "";
-        String PhoneNumbers = "";
-        readFile();                                         // Read the saved data.
-
-        if (MsgInfo != null)                                // If the message existed, get the message.
-        {
-            Log.d("TAG", "MsgInfo is not null");
-            Message = MsgInfo.toString();
-        }
-
-        if (PhoneInfo != null)                              // If phone numbers existed,
-        {                                                   // get the phone numbers.
-            Log.d("TAG", "PhoneInfo is not null");
-            PhoneNumbers = PhoneInfo.toString();
-        }
-
-        if (PhoneNumbers.trim().length() > 0)               // If the phone numbers are there, then
-        {                                                   // Send the messages.
-            Log.d("TAG", "Sending Messages");
-            Log.d("TAG", "PhoneNumbers: " + PhoneNumbers);
-            for (int k = 0; k < PhoneInfo.length(); k++)    // Find all the phone numbers and send
-            {                                               // them an emergency message.
-                char ch = PhoneInfo.charAt(k);
-                currNumber = currNumber + ch;
-                if (ch == '\n')                             // if "\n" new phone number.
-                {
-                    Log.d(TAG, "Note: Current number = " + currNumber);
-                    if (currNumber.trim().length() > 0) {
-                        SendSingleMessage(currNumber, Message);
-                        currNumber = "";
-                        k++;
-                    }
-                }
-            }
-            Toast.makeText(this, "Message Sent", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Toast.makeText(this, "No Emergency Contact Found, Please Configure", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /*
-    * Name: SendSingleMessage
-    * Objective: This message sends a single textmessage to your contact*/
-    public void SendSingleMessage(String phoneNumber, String Message) {
-        SmsManager currSms = SmsManager.getDefault();
-        currSms.sendTextMessage(phoneNumber, null, Message, null, null);
-    }
-
-    /*
-    * This method kicks in when the alert Button is clicked and the people want to send the text messages
-    * */
-    public void AlertClicked(View view) throws IOException, JSONException {
-        SendBulkMessages();
-    }
-
-    /*
-    * Name: ConfigureClicked
-    * Objective: This method kicks in when the configure button is clicked.  It is responsible for moving to
-    * the next intent and screen.  Also transfer data from other activities.
-    * */
-    public void ConfigureClicked(View view)
-    {
-        Intent ConfigureIntent = new Intent(MainActivity.this, configureScreen.class);
-        ConfigureIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //startActivity(new Intent(MainActivity.this, configureScreen.class));
-        startActivity(ConfigureIntent);
-        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -656,9 +328,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (!LOCATION_FOUND) {
-            FindAddress();
-        }
+        isConnected = true;
     }
 
     @Override

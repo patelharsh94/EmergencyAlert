@@ -1,4 +1,4 @@
-package electroniccupcake.EmergencyAlert;
+package old_code;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import electroniccupcake.EmergencyAlert.Node;
 import electroniccupcake.projectalert.R;
 
 /**
@@ -22,7 +23,7 @@ import electroniccupcake.projectalert.R;
 
 public class AlertAdapter extends ArrayAdapter
 {
-        Node [] items = null;           // All the items in the list.
+        Node[] items = null;           // All the items in the list.
         Context context;                // The place this array is in.
 
         public AlertAdapter(Context context, Node [] resources)

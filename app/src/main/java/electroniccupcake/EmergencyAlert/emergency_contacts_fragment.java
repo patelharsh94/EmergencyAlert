@@ -115,6 +115,12 @@ public class emergency_contacts_fragment extends Fragment
         adapter.resetConnection(this.getContext());
     }
 
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        adapter.unBinService(this.getContext());
+    }
 
     @Override
       /*
